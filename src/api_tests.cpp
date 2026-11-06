@@ -50,7 +50,7 @@ static void expectError(const string& body, const char* mustContain) {
               get(j, "error").s.find(mustContain) != string::npos;
     if (!ok) printf("  (got status %d, error: %s)\n", status, get(j, "error").s.c_str());
     CHECK(ok);
-}
+} 
 
 static const char* BASIC_PROCS =
     R"([{"pid":1,"arrival":0,"burst":5,"priority":1},

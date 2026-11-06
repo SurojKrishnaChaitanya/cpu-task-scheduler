@@ -2,13 +2,15 @@
 #include <iomanip>
 #include <sstream>
 #include "json_mini.h"
+using namespace std;
+using namespace mj;
 
-std::string serializeResult(const ProcessList& list, const ScheduleResult& result,
+string serializeResult(const ProcessList& list, const ScheduleResult& result,
                             const Stats& stats, const RunInfo& info) {
-    std::ostringstream o;
-    o << std::setprecision(15);
+    ostringstream o;
+    o << setprecision(15);
 
-    o << "{\"algorithm\":" << mj::quote(info.algorithm);
+    o << "{\"algorithm\":" << quote(info.algorithm);
     if (info.algorithm == "rr") o << ",\"quantum\":" << info.quantum;
     else o << ",\"preemptive\":" << (info.preemptive ? "true" : "false");
 

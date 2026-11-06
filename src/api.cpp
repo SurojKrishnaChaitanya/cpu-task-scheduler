@@ -33,7 +33,6 @@ ApiResponse handleRunRequest(const string& requestBody) {
     if (!mj::parse(requestBody, req)) return fail("Request body is not valid JSON");
     if (req.type != Value::Object)    return fail("Request body must be a JSON object");
 
-    // ---- algorithm and its options
     const Value* algoField = req.find("algorithm");
     if (!algoField || algoField->type != Value::String)
         return fail("Missing field 'algorithm' (\"rr\" or \"priority\")");

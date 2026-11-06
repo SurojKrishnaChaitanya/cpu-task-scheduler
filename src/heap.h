@@ -4,28 +4,18 @@
 #include "process.h"
 using namespace std;
 
-// THE comparison rule, in exactly one place:
-//   1. higher priority number wins   (higher number = more urgent)
-//   2. then earlier arrival wins
-//   3. then lower PID wins
-// Returns true if a should run before b.
 inline bool hasHigherPriority(const Process* a, const Process* b) {
     if (a->priority != b->priority) return a->priority > b->priority;
     if (a->arrival  != b->arrival)  return a->arrival  < b->arrival;
     return a->pid < b->pid;
 }
 
-// Binary heap stored in an array. The best process is always at index 0.
-//   parent of i : (i - 1) / 2
-//   children    : 2i + 1 and 2i + 2
-// Holds borrowed Process* pointers into the ProcessList, never copies.
 class Heap {
 public:
     bool empty() const { return a_.empty(); }
     int  size()  const { return static_cast<int>(a_.size()); }
     Process* peek() const { return a_.empty() ? nullptr : a_[0]; }
 
-    // PIDs in the order they would be extracted (best first). Works on a copy.
     vector<int> orderedPids() const {
         Heap copy = *this;
         vector<int> out;
@@ -33,13 +23,11 @@ public:
         return out;
     }
 
-    // Put the new item at the end, then sift it UP while it beats its parent.
     void insert(Process* p) {
         a_.push_back(p);
         siftUp(a_.size() - 1);
     }
 
-    // Take index 0, move the last item to the top, then sift it DOWN.
     Process* extractTop() {
         if (a_.empty()) return nullptr;
         Process* top = a_[0];

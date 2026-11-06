@@ -1,8 +1,9 @@
 #pragma once
 #include <string>
+using namespace std;
 
 struct ApiResponse {
     int status;
-    std::string body;
+    string body;
 };
 ApiResponse handleRunRequest(const std::string& requestBody);

@@ -1,4 +1,5 @@
 #include "process.h"
+using namespace std;
 
 Process::Process(int pid, int arrival, int burst, int priority)
     : pid(pid), arrival(arrival), burst(burst), priority(priority),
@@ -15,7 +16,7 @@ ProcessList::~ProcessList() {
 }
 
 Process* ProcessList::append(int pid, int arrival, int burst, int priority,
-                            std::string* error) {
+                            string* error) {
     auto fail = [&](const char* msg) -> Process* {
         if (error) *error = msg;
         return nullptr;

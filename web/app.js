@@ -29,7 +29,6 @@ function nextPid() {
   return ids.length ? Math.max(...ids) + 1 : 1;
 }
 
-// Client-side validation is a convenience; the server checks everything again.
 function readProcesses() {
   const procs = [], seen = new Set();
   const rows = [...inputBody.rows];
@@ -50,7 +49,6 @@ function readProcesses() {
   return { procs };
 }
 
-// ---------- talking to the C++ server ----------
 async function request(body) {
   const res = await fetch(API + '/run', {
     method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body)
@@ -95,7 +93,6 @@ async function go(compare) {
   }
 }
 
-// ---------- rendering ----------
 function el(tag, cls, text) {
   const e = document.createElement(tag);
   if (cls) e.className = cls;
@@ -155,14 +152,12 @@ function render(r, keepTime) {
 
 function setError(msg) { $('error').textContent = msg; }
 
-// Quantum shows for Round Robin, the preemptive toggle for Priority; both in compare mode.
 function syncControls() {
   const a = $('algo').value;
   $('quantumBox').hidden = !(a === 'rr' || compareOn);
   $('preBox').hidden = !(a === 'priority' || compareOn);
 }
 
-// ---------- wiring ----------
 $('add').onclick = () => addRow(nextPid(), 0, 3, 1);
 $('run').onclick = () => go(false);
 $('compare').onclick = () => go(true);
@@ -173,7 +168,6 @@ addRow(2, 1, 3, 2);
 addRow(3, 2, 1, 3);
 syncControls();
 
-// ---------- playback: replay the finished simulation with a moving clock ----------
 let sim = null, byPid = {}, barRows = {}, T = 0, playing = false, lastFrame = 0;
 
 function chip(pid) {
@@ -203,7 +197,6 @@ function startPlayer(r, keepTime) {
     bars.appendChild(row);
     barRows[p.pid] = { fill, info };
   });
-  // A fresh Run shows the finished picture (Play replays from 0); a live update keeps the clock where it was.
   setTime(keepTime === undefined ? r.totalTime : keepTime);
 }
 
@@ -222,13 +215,11 @@ function setTime(t) {
   const frac = Math.min(1, Math.max(0, (T - e.start) / (e.end - e.start)));
   $('playhead').style.left = (at.offsetLeft + frac * at.offsetWidth) + 'px';
 
-  // How much each process has run so far.
   const ran = {};
   sim.gantt.forEach(g => {
     if (!g.idle) ran[g.pid] = (ran[g.pid] || 0) + Math.max(0, Math.min(g.end, T) - g.start);
   });
 
-  // Ready queue: the snapshot taken when this slice began, plus anyone who arrived since.
   const running = cur && !cur.idle ? cur.pid : null;
   let q = [];
   if (running !== null) {
@@ -286,10 +277,6 @@ $('restart').onclick = () => { pause(); setTime(0); };
 $('fwd').onclick = () => { pause(); setTime(Math.floor(T + 1e-9) + 1); };
 $('back').onclick = () => { pause(); setTime(Math.ceil(T - 1e-9) - 1); };
 
-// ---------- live additions: a new process joins the schedule without restarting it ----------
-// The server is stateless, but the scheduler is deterministic: a process that arrives at or after
-// the current clock cannot change anything before that clock. So we re-run with the new process
-// included and keep the playback clock where it is; only the future of the schedule changes.
 function liveArrival() {
   const d = Number($('liveDelay').value);
   return Math.max(0, Math.ceil(T - 1e-9)) + (Number.isInteger(d) && d > 0 ? d : 0);
@@ -310,7 +297,7 @@ async function addLive() {
   if (!Number.isInteger(delay) || delay < 0) return setError('"Arrives in" must be a whole number of 0 or more.');
 
   const wasPlaying = playing;
-  pause();                                   // freeze the clock while the schedule is recomputed
+  pause();                            
   const now = T;
   const arrival = liveArrival();
   addRow(nextPid(), arrival, burst, priority);
@@ -332,10 +319,9 @@ async function addLive() {
 $('liveBtn').onclick = addLive;
 $('liveDelay').oninput = updateLiveNote;
 
-// ---------- metrics cards ----------
 function countUp(id, value, decimals, suffix) {
   const node = $(id);
-  const token = (node._tok = (node._tok || 0) + 1);       // a newer run cancels an older animation
+  const token = (node._tok = (node._tok || 0) + 1);
   const show = v => { node.textContent = v.toFixed(decimals) + suffix; };
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return show(value);
   const t0 = performance.now();
@@ -354,7 +340,6 @@ function showMetrics(r) {
   countUp('kUtil', r.totalTime ? (r.totalTime - r.idleTime) / r.totalTime * 100 : 0, 1, '%');
 }
 
-// ---------- algorithm comparison panel (Round Robin vs Priority) ----------
 const ALGO_COLOR = { rr: 'var(--c-rr)', priority: 'var(--c-pr)' };
 const algoName = r => (r.algorithm === 'rr' ? 'RR' : 'Priority');
 

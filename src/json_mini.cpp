@@ -3,7 +3,6 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-
 namespace mj {
 
 const Value* Value::find(const std::string& key) const {
@@ -38,7 +37,6 @@ void appendUtf8(std::string& out, unsigned cp) {
     }
 }
 
-// Recursive-descent parser: one function per kind of JSON value.
 struct Parser {
     const std::string& t;
     size_t i = 0;
@@ -74,7 +72,7 @@ struct Parser {
         bool neg = false, real = false;
         if (t[i] == '-') { neg = true; ++i; }
         if (i >= t.size() || !isDigit(t[i])) return false;
-        if (t[i] == '0') ++i;                                   // no leading zeros
+        if (t[i] == '0') ++i;                                   
         else while (i < t.size() && isDigit(t[i])) ++i;
         if (i < t.size() && t[i] == '.') {
             real = true; ++i;
@@ -91,7 +89,7 @@ struct Parser {
         if (real) { v.type = Value::Real; v.d = std::strtod(tok.c_str(), nullptr); return true; }
         v.type = Value::Int;
         size_t digits = tok.size() - (neg ? 1 : 0);
-        if (digits > 18) v.i = neg ? -LLONG_MAX : LLONG_MAX;    // saturate; callers range-check
+        if (digits > 18) v.i = neg ? -LLONG_MAX : LLONG_MAX;    
         else v.i = std::strtoll(tok.c_str(), nullptr, 10);
         return true;
     }
@@ -101,7 +99,7 @@ struct Parser {
         while (i < t.size()) {
             unsigned char c = static_cast<unsigned char>(t[i++]);
             if (c == '"') return true;
-            if (c < 0x20) return false;                         // raw control characters are illegal
+            if (c < 0x20) return false;                        
             if (c != '\\') { out += static_cast<char>(c); continue; }
             if (i >= t.size()) return false;
             char e = t[i++];
@@ -128,12 +126,12 @@ struct Parser {
                 default: return false;
             }
         }
-        return false;   // ran off the end: unterminated string
+        return false;  
     }
 
     bool array(Value& v, int depth) {
         v.type = Value::Array;
-        ++i;   // '['
+        ++i;   
         ws();
         if (i < t.size() && t[i] == ']') { ++i; return true; }
         while (true) {
@@ -150,7 +148,7 @@ struct Parser {
 
     bool object(Value& v, int depth) {
         v.type = Value::Object;
-        ++i;   // '{'
+        ++i;
         ws();
         if (i < t.size() && t[i] == '}') { ++i; return true; }
         while (true) {
@@ -174,14 +172,14 @@ struct Parser {
     }
 };
 
-}  // namespace
+}
 
 bool parse(const std::string& text, Value& out) {
     Value tmp;
     Parser p(text);
     if (!p.value(tmp, 0)) return false;
     p.ws();
-    if (p.i != text.size()) return false;   // trailing garbage
+    if (p.i != text.size()) return false;
     out = std::move(tmp);
     return true;
 }
@@ -202,5 +200,4 @@ std::string quote(const std::string& s) {
     }
     return out + "\"";
 }
-
 }
