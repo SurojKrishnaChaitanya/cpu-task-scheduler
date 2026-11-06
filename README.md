@@ -28,67 +28,6 @@ All three are implemented by hand in `src/`:
 The queue and the heap hold pointers into the linked list, never copies, so a process's remaining time lives in exactly one place.
 ```
 
-## Run it locally
-
-You need a C++17 compiler (`g++`). From the project folder:
-
-**Windows (PowerShell)**
-
-```
-g++ -std=c++17 -Wall -Wextra -I third_party -o server src/server.cpp src/api.cpp src/serializer.cpp src/json_mini.cpp src/process.cpp src/stats.cpp src/scheduler.cpp -lws2_32
-.\server.exe
-```
-
-**Linux or macOS**
-
-```
-make server
-./server
-```
-
-Then open `http://localhost:8080`. Press Ctrl+C to stop the server. To use another port, pass it as an argument, for example `.\server.exe 9000`.
-
-## Run the tests
-
-**Windows (PowerShell)**
-
-```
-g++ -std=c++17 -Wall -Wextra -I third_party -o tests src/tests.cpp src/process.cpp src/stats.cpp src/scheduler.cpp
-.\tests.exe
-
-g++ -std=c++17 -Wall -Wextra -o api_tests src/api_tests.cpp src/api.cpp src/serializer.cpp src/json_mini.cpp src/process.cpp src/stats.cpp src/scheduler.cpp
-.\api_tests.exe
-```
-
-**Linux or macOS**
-
-```
-make check
-```
-
-The tests check every scheduler against hand-worked examples, including idle gaps, ties, preemption and the queue and heap behaviour. They also check that adding a process at a later clock never changes the part of the schedule that has already happened.
-
-## API
-
-The server is stateless: each simulation is a pure function of its input.
-
-`POST /run` takes JSON such as:
-
-```json
-{
-  "algorithm": "rr",
-  "quantum": 2,
-  "processes": [
-    { "pid": 1, "arrival": 0, "burst": 5, "priority": 1 },
-    { "pid": 2, "arrival": 1, "burst": 3, "priority": 2 }
-  ]
-}
-```
-
-Use `"algorithm": "priority"` with an optional `"preemptive": true` for priority scheduling. The response contains the Gantt entries (with the ready queue at each slice), one row per process (completion, turnaround, waiting and response times), the averages, the total time and the idle time. Invalid input returns HTTP 400 with an `error` message.
-
-`GET /health` returns `ok`.
-
 ## Deployment
 
 The server and the page can be hosted separately.
