@@ -17,7 +17,7 @@ The scheduling logic is written in C++ and exposed through a small HTTP API. A p
 
 ## Data structures
 
-Implemented the following Data Structures gain `src/`:
+Implemented the following Data Structures in `src/`:
 
 | Structure | File | Role |
 |---|---|---|
@@ -28,7 +28,7 @@ Implemented the following Data Structures gain `src/`:
 The queue and the heap hold pointers into the linked list, never copies, so a process's remaining time lives in exactly one place.
 
 
-##Deployment
+## Deployment
 
 The server and the page can be hosted separately.
 
