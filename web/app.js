@@ -421,7 +421,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal()
 
 function applyTheme(theme) {
   document.documentElement.dataset.theme = theme;
-  $('theme').textContent = theme === 'dark' ? 'Light mode' : 'Dark mode';
+  $('theme').textContent = theme === 'dark' ? '☀️ Light' : '🌙 Dark';
   try { localStorage.setItem('theme', theme); } catch (e) {}
 }
 applyTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light');
