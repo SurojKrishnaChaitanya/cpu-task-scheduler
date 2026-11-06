@@ -1,4 +1,4 @@
-# CPU Task Scheduler
+# CPU Task Scheduling Simulator
 
 A simulator that runs a set of processes on a single CPU under **Round Robin** and **Priority** scheduling. It shows the order of execution as a Gantt chart, computes completion, turnaround, waiting and response times for every process, and reports the averages.
 
