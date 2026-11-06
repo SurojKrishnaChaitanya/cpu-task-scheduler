@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CPU Task Scheduler</title>
+<script>try { if (localStorage.getItem("theme") === "dark") document.documentElement.dataset.theme = "dark"; } catch (e) {}</script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <header>
+    <div>
+  <h1>CPU Task <span class="hl">Scheduler</span></h1>
+  <p class="sub">Run processes on one CPU with Round Robin or Priority scheduling. <mark>A higher priority number means more urgent.</mark></p>
+    </div>
+    <button id="theme" type="button">Dark mode</button>
+  </header>
+
+  <section>
+    <h2>Processes</h2>
+    <table id="input">
+      <thead><tr><th>PID</th><th>Arrival</th><th>Burst</th><th>Priority</th><th></th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <button id="add" type="button">Add process</button>
+  </section>
+
+  <section class="controls">
+    <label>Algorithm
+      <select id="algo">
+        <option value="rr">Round Robin</option>
+        <option value="priority">Priority</option>
+      </select>
+    </label>
+    <label id="quantumBox">Time quantum <input id="quantum" type="number" min="1" step="1" value="2"></label>
+    <label id="preBox"><input id="pre" type="checkbox"> Preemptive</label>
+    <button id="run" type="button" class="primary">Run</button>
+    <button id="compare" type="button">Compare both</button>
+  </section>
+
+  <p id="error" role="alert"></p>
+
+  <section id="out" hidden>
+    <h2>Gantt chart</h2>
+    <div class="wrap"><div id="gantt"></div></div>
+
+    <div id="player">
+      <button id="restart" type="button">Restart</button>
+      <button id="back" type="button">Back</button>
+      <button id="play" type="button" class="primary">Play</button>
+      <button id="fwd" type="button">Forward</button>
+      <label>Speed
+        <select id="speed">
+          <option value="0.5">Slow</option>
+          <option value="1" selected>Normal</option>
+          <option value="3">Fast</option>
+        </select>
+      </label>
+      <output id="clock">Clock 0</output>
+    </div>
+    <div id="live">
+      <div class="live-row"><b>On the CPU</b><span id="running"></span></div>
+      <div class="live-row"><b>Ready queue</b><span id="queue" class="chips"></span><small>next to run on the left</small></div>
+      <div id="bars"></div>
+    </div>
+    <div id="liveAdd">
+      <b>Add a process while it runs</b>
+      <label>Burst <input id="liveBurst" type="number" min="1" step="1" value="3"></label>
+      <label id="liveP">Priority <input id="livePriority" type="number" step="1" value="1"></label>
+      <label>Arrives in <input id="liveDelay" type="number" min="0" step="1" value="0"> units</label>
+      <button id="liveBtn" type="button">Add process</button>
+      <p id="liveNote"></p>
+      <p id="liveMsg"></p>
+    </div>
+    <p id="summary"></p>
+
+    <h2>Metrics</h2>
+    <div id="kpis">
+      <article class="kpi" data-tone="wt"><span class="kpi-label">Average waiting time</span><strong class="kpi-value" id="kWT">0</strong><span class="kpi-hint">Time units spent in the ready queue</span></article>
+      <article class="kpi" data-tone="tat"><span class="kpi-label">Average turnaround time</span><strong class="kpi-value" id="kTAT">0</strong><span class="kpi-hint">Time units from arrival to completion</span></article>
+      <article class="kpi" data-tone="rt"><span class="kpi-label">Average response time</span><strong class="kpi-value" id="kRT">0</strong><span class="kpi-hint">Time units from arrival to first CPU time</span></article>
+      <article class="kpi" data-tone="util"><span class="kpi-label">CPU utilization</span><strong class="kpi-value" id="kUtil">0</strong><span class="kpi-hint">Share of the run the CPU was busy</span></article>
+    </div>
+
+    <h2>Results</h2>
+    <div class="wrap">
+      <table id="results">
+        <thead><tr><th>Process</th><th>Arrival</th><th>Burst</th><th>Priority</th><th>Completion</th><th>Turnaround</th><th>Waiting</th><th>Response</th></tr></thead>
+        <tbody></tbody>
+        <tfoot></tfoot>
+      </table>
+    </div>
+
+  </section>
+</main>
+<div id="modal" class="modal" hidden>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-head">
+      <h2 id="modalTitle">Algorithm comparison</h2>
+      <button id="modalClose" type="button" class="x" aria-label="Close">✕</button>
+    </div>
+    <div class="cmp-charts">
+      <div><h3>Average waiting time</h3><div id="barsWT"></div></div>
+      <div><h3>Average turnaround time</h3><div id="barsTAT"></div></div>
+    </div>
+    <div class="wrap">
+      <table id="cmpTable">
+        <thead><tr><th>Algorithm</th><th>Avg WT</th><th>Avg TAT</th><th>Avg RT</th><th>Ranking</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p id="cmpNote" class="sub"></p>
+  </div>
+</div>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

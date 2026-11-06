@@ -1,0 +1,6 @@
+# compiled programs: rebuilt from source on every machine
+*.exe
+*.o
+*.obj
+/tests
+/api_tests
