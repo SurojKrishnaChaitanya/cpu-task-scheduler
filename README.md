@@ -17,7 +17,7 @@ The scheduling logic is written in C++ and exposed through a small HTTP API. A p
 
 ## Data structures
 
-All three are implemented by hand in `src/`:
+Implemented the following Data Structures gain `src/`:
 
 | Structure | File | Role |
 |---|---|---|
@@ -26,9 +26,9 @@ All three are implemented by hand in `src/`:
 | Binary heap | `heap.h` | The priority scheduler's ready queue, with the comparison rule in one function. |
 
 The queue and the heap hold pointers into the linked list, never copies, so a process's remaining time lives in exactly one place.
-```
 
-## Deployment
+
+##Deployment
 
 The server and the page can be hosted separately.
 
