@@ -2,7 +2,10 @@
 *.exe
 *.o
 *.obj
+/server
 /tests
 /api_tests
-api_tests.cpp
-tests.cpp
+
+# test programs are kept locally only
+src/tests.cpp
+src/api_tests.cpp

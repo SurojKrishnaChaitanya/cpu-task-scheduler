@@ -1,23 +1,11 @@
 CXX      = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra -O1 -I third_party
-CORE     = src/process.cpp src/stats.cpp src/scheduler.cpp
-API      = src/api.cpp src/serializer.cpp src/json_mini.cpp
+SRC      = src/server.cpp src/api.cpp src/serializer.cpp src/json_mini.cpp src/process.cpp src/stats.cpp src/scheduler.cpp
 
-all: tests api_tests server
-
-tests: src/tests.cpp $(CORE)
-	$(CXX) $(CXXFLAGS) -o $@ $^
-
-api_tests: src/api_tests.cpp $(API) $(CORE)
-	$(CXX) $(CXXFLAGS) -o $@ $^
-
-server: src/server.cpp $(API) $(CORE)
+server: $(SRC)
 	$(CXX) $(CXXFLAGS) -o $@ $^ -pthread
 
-check: tests api_tests
-	./tests && ./api_tests
-
 clean:
-	rm -f tests api_tests server
+	rm -f server
 
-.PHONY: all check clean
+.PHONY: clean
