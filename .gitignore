@@ -4,3 +4,5 @@
 *.obj
 /tests
 /api_tests
+api_tests.cpp
+tests.cpp
